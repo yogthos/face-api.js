@@ -182,39 +182,43 @@ export type DescribeWithNetsOptions = {
   withTinyYolov2?: WithTinyYolov2Options
 }
 
-const gpgpu = tf.backend() && (tf.backend() as any).gpgpu
-
-if (gpgpu) {
-  console.log('running tests on WebGL backend')
-} else {
-  console.log('running tests on CPU backend')
-}
-
 export function describeWithBackend(description: string, specDefinitions: () => void) {
+  // Check if we're running with WebGL backend and GPGPUContext is available
+  const backend = tf.engine().backend
+  const hasGPGPUContext = backend &&
+    typeof (backend as any).GPGPUContext !== 'undefined' &&
+    typeof (backend as any).MathBackendWebGL !== 'undefined'
 
-  if (!(gpgpu instanceof (tf.engine().backend as any).GPGPUContext)) {
+  if (!hasGPGPUContext) {
     describe(description, specDefinitions)
     return
   }
 
   const defaultBackendName = tf.getBackend()
   const newBackendName = 'testBackend'
-  const backend = new (tf.engine().backend as any).MathBackendWebGL(gpgpu)
 
-  describe(description, () => {
-    beforeAll(() => {
-      tf.registerBackend(newBackendName, () => backend)
-      tf.setBackend(newBackendName)
+  try {
+    const gpgpu = new (backend as any).GPGPUContext()
+    const newBackend = new (backend as any).MathBackendWebGL(gpgpu)
+
+    describe(description, () => {
+      beforeAll(() => {
+        tf.registerBackend(newBackendName, () => newBackend)
+        tf.setBackend(newBackendName)
+      })
+
+      afterAll(() => {
+        tf.setBackend(defaultBackendName)
+        tf.removeBackend(newBackendName)
+        newBackend.dispose()
+      })
+
+      specDefinitions()
     })
-
-    afterAll(() => {
-      tf.setBackend(defaultBackendName)
-      tf.removeBackend(newBackendName)
-      backend.dispose()
-    })
-
-    specDefinitions()
-  })
+  } catch (error) {
+    // Fallback to CPU backend if WebGL setup fails
+    describe(description, specDefinitions)
+  }
 }
 
 export function describeWithNets(

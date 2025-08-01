@@ -125,7 +125,7 @@ describeWithBackend('ageGenderNet', () => {
       })
 
       it('single batch size 1 tf.Tensor4Ds', async () => {
-        const tensor = tf.tidy(() => tf.browser.fromPixels(createCanvasFromMedia(imgElAngry)).expandDims(0) as tf.Tensor4D);
+        const tensor = tf.tidy(() => tf.expandDims(tf.browser.fromPixels(createCanvasFromMedia(imgElAngry)), 0) as tf.Tensor4D);
 
         await expectAllTensorsReleased(async () => {
           const { age, gender } = await ageGenderNet.forwardInput(await toNetInput(tensor))
@@ -138,7 +138,7 @@ describeWithBackend('ageGenderNet', () => {
 
       it('multiple batch size 1 tf.Tensor4Ds', async () => {
         const tensors = [imgElAngry, imgElAngry, imgElAngry]
-          .map(el => tf.tidy(() => tf.browser.fromPixels(createCanvasFromMedia(el)).expandDims(0) as tf.Tensor4D));
+          .map(el => tf.tidy(() => tf.expandDims(tf.browser.fromPixels(createCanvasFromMedia(el)), 0) as tf.Tensor4D));
 
         await expectAllTensorsReleased(async () => {
           const { age, gender } = await ageGenderNet.forwardInput(await toNetInput(tensors))
@@ -187,7 +187,7 @@ describeWithBackend('ageGenderNet', () => {
       })
 
       it('single batch size 1 tf.Tensor4Ds', async () => {
-        const tensor = tf.tidy(() => tf.browser.fromPixels(createCanvasFromMedia(imgElAngry)).expandDims(0) as tf.Tensor4D);
+        const tensor = tf.tidy(() => tf.expandDims(tf.browser.fromPixels(createCanvasFromMedia(imgElAngry)), 0) as tf.Tensor4D);
 
         await expectAllTensorsReleased(async () => {
           await ageGenderNet.predictAgeAndGender(tensor)
@@ -198,7 +198,7 @@ describeWithBackend('ageGenderNet', () => {
 
       it('multiple batch size 1 tf.Tensor4Ds', async () => {
         const tensors = [imgElAngry, imgElAngry, imgElAngry]
-          .map(el => tf.tidy(() => tf.browser.fromPixels(createCanvasFromMedia(el)).expandDims(0) as tf.Tensor4D));
+          .map(el => tf.tidy(() => tf.expandDims(tf.browser.fromPixels(createCanvasFromMedia(el)), 0) as tf.Tensor4D));
 
         await expectAllTensorsReleased(async () => {
           await ageGenderNet.predictAgeAndGender(tensors)

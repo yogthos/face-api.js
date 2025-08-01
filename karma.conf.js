@@ -44,6 +44,7 @@ export default function(config) {
   config.set({
     frameworks: ['jasmine', 'karma-typescript'],
     files: [
+      'node_modules/tslib/tslib.js',
       'src/**/*.ts',
       'test/**/*.ts'
     ].concat(dataFiles),
@@ -52,7 +53,12 @@ export default function(config) {
       '**/*.ts': ['karma-typescript']
     },
     karmaTypescriptConfig: {
-      tsconfig: 'tsconfig.test.json'
+      tsconfig: 'tsconfig.test-browser.json',
+      bundlerOptions: {
+        sourceMap: true,
+        addNodeGlobals: true,
+        ignore: ['tslib']
+      }
     },
     browsers: ['Chrome'],
     browserNoActivityTimeout: 120000,

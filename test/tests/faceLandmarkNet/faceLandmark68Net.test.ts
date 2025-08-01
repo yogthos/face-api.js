@@ -192,7 +192,7 @@ describeWithBackend('faceLandmark68Net', () => {
       })
 
       it('single batch size 1 tf.Tensor4Ds', async () => {
-        const tensor = tf.tidy(() => tf.browser.fromPixels(createCanvasFromMedia(imgEl1)).expandDims(0) as tf.Tensor4D);
+        const tensor = tf.tidy(() => tf.expandDims(tf.browser.fromPixels(createCanvasFromMedia(imgEl1)), 0) as tf.Tensor4D);
 
         await expectAllTensorsReleased(async () => {
           const outTensor = await faceLandmark68Net.forwardInput(await toNetInput(tensor))
@@ -204,7 +204,7 @@ describeWithBackend('faceLandmark68Net', () => {
 
       it('multiple batch size 1 tf.Tensor4Ds', async () => {
         const tensors = [imgEl1, imgEl1, imgEl1]
-          .map(el => tf.tidy(() => tf.browser.fromPixels(createCanvasFromMedia(el)).expandDims(0) as tf.Tensor4D));
+          .map(el => tf.tidy(() => tf.expandDims(tf.browser.fromPixels(createCanvasFromMedia(el)), 0) as tf.Tensor4D));
 
         await expectAllTensorsReleased(async () => {
           const outTensor = await faceLandmark68Net.forwardInput(await toNetInput(tensors))
@@ -252,7 +252,7 @@ describeWithBackend('faceLandmark68Net', () => {
       })
 
       it('single batch size 1 tf.Tensor4Ds', async () => {
-        const tensor = tf.tidy(() => tf.browser.fromPixels(createCanvasFromMedia(imgEl1)).expandDims(0) as tf.Tensor4D);
+        const tensor = tf.tidy(() => tf.expandDims(tf.browser.fromPixels(createCanvasFromMedia(imgEl1)), 0) as tf.Tensor4D);
 
         await expectAllTensorsReleased(async () => {
           await faceLandmark68Net.detectLandmarks(tensor)
@@ -263,7 +263,7 @@ describeWithBackend('faceLandmark68Net', () => {
 
       it('multiple batch size 1 tf.Tensor4Ds', async () => {
         const tensors = [imgEl1, imgEl1, imgEl1]
-          .map(el => tf.tidy(() => tf.browser.fromPixels(createCanvasFromMedia(el)).expandDims(0) as tf.Tensor4D));
+          .map(el => tf.tidy(() => tf.expandDims(tf.browser.fromPixels(createCanvasFromMedia(el)), 0) as tf.Tensor4D));
 
         await expectAllTensorsReleased(async () => {
           await faceLandmark68Net.detectLandmarks(tensors)

@@ -1,5 +1,5 @@
-export * from './BoundingBox'
 export * from './Box'
+export * from './BoundingBox'
 export * from './Dimensions'
 export * from './FaceDetection';
 export * from './FaceLandmarks';

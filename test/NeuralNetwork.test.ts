@@ -221,7 +221,7 @@ describe('NeuralNetwork', () => {
       expect(net.params.fc instanceof tf.Variable).toBe(false)
     }))
 
-    it('disposes old tensors', () => () => {
+    it('disposes old tensors', () => {
       const net = new FakeNeuralNetwork(
         tf.variable(tf.scalar(0)),
         tf.variable(tf.scalar(0)),

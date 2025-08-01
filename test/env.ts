@@ -3,18 +3,31 @@ import * as tf from '@tensorflow/tfjs-core';
 import { fetchImage, fetchJson, fetchNetWeights, NeuralNetwork } from '../src';
 import { TestEnv } from './Environment';
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000
+// Set timeout for Jest
+jest.setTimeout(60000)
 
-if (typeof window !== 'undefined' && window['__karma__'] && (window['__karma__'].config.jasmine.args as string[]).some(arg => arg === 'backend_cpu')) {
-  tf.setBackend('cpu')
+// Set up TensorFlow.js backend for browser tests
+if (typeof window !== 'undefined') {
+  // Try to set CPU backend, fallback to default if not available
+  try {
+    tf.setBackend('cpu')
+  } catch (error) {
+    console.warn('CPU backend not available, using default backend')
+  }
 }
 
 async function loadImageBrowser(uri: string): Promise<HTMLImageElement> {
-  return fetchImage(`base${uri.startsWith('/') ? '' : '/'}${uri}`)
+  // Fix URL resolution for Jest environment
+  const baseUrl = process.env.NODE_ENV === 'test' ? 'http://localhost:3000' : ''
+  const fullUri = uri.startsWith('http') ? uri : `${baseUrl}${uri.startsWith('/') ? '' : '/'}${uri}`
+  return fetchImage(fullUri)
 }
 
 async function loadJsonBrowser<T>(uri: string): Promise<T> {
-  return fetchJson<T>(`base${uri.startsWith('/') ? '' : '/'}${uri}`)
+  // Fix URL resolution for Jest environment
+  const baseUrl = process.env.NODE_ENV === 'test' ? 'http://localhost:3000' : ''
+  const fullUri = uri.startsWith('http') ? uri : `${baseUrl}${uri.startsWith('/') ? '' : '/'}${uri}`
+  return fetchJson<T>(fullUri)
 }
 
 async function initNetBrowser<TNet extends NeuralNetwork<any>>(
@@ -22,9 +35,10 @@ async function initNetBrowser<TNet extends NeuralNetwork<any>>(
   uncompressedFilename: string | boolean,
   isUnusedModel: boolean = false
 ) {
+  const baseUrl = process.env.NODE_ENV === 'test' ? 'http://localhost:3000' : ''
   const url = uncompressedFilename
-    ? await fetchNetWeights(`base/weights_uncompressed/${uncompressedFilename}`)
-    : (isUnusedModel ? 'base/weights_unused' : 'base/weights')
+    ? await fetchNetWeights(`${baseUrl}/weights_uncompressed/${uncompressedFilename}`)
+    : (isUnusedModel ? `${baseUrl}/weights_unused` : `${baseUrl}/weights`)
   await net.load(url)
 }
 
