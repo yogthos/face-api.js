@@ -1,7 +1,7 @@
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('@tensorflow/tfjs-core')) :
     typeof define === 'function' && define.amd ? define(['exports', '@tensorflow/tfjs-core'], factory) :
-    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.faceapi = global.faceapi || {}, global.tf));
+    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.faceapi = {}, global.tf));
 })(this, (function (exports, tf) { 'use strict';
 
     function _interopNamespaceDefault(e) {

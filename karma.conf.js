@@ -35,7 +35,7 @@ exclude = exclude.concat(['test/env.node.ts'])
 exclude = exclude.concat(['test/tests-legacy/**/*.ts'])
 
 
-module.exports = function(config) {
+export default function(config) {
   const args = []
   if (process.env.BACKEND_CPU) {
     args.push('backend_cpu')

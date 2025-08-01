@@ -2,10 +2,13 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "build/es6",
-    "module": "es2020",
+    "module": "esnext",
     "target": "es2020",
     "strictFunctionTypes": false,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "declaration": true,
+    "declarationDir": "build/es6",
+    "moduleResolution": "node"
   },
   "include": [
     "src"

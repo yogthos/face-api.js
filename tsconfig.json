@@ -14,7 +14,7 @@
     "importHelpers": true,
     "skipLibCheck": true,
     "outDir": "build/commonjs",
-    "module": "commonjs",
+    "module": "esnext",
     "target": "es2020",
     "moduleResolution": "node",
     "lib": ["es2020", "dom"],
@@ -23,7 +23,9 @@
       "node_modules/@types"
     ],
     "strictFunctionTypes": false,
-    "strictPropertyInitialization": false
+    "strictPropertyInitialization": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   },
   "formatCodeOptions": {
     "indentSize": 2,
