@@ -79,7 +79,7 @@ export class DetectSingleFaceLandmarksTask<
 
     const parentResult = await this.parentTask
     if (!parentResult) {
-      return
+      return undefined
     }
 
     const { detection } = parentResult

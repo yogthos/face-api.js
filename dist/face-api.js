@@ -4386,7 +4386,7 @@
         async run() {
             const parentResult = await this.parentTask;
             if (!parentResult) {
-                return;
+                return undefined;
             }
             const faceExpressions = await extractSingleFaceAndComputeResult(parentResult, this.input, face => nets.faceExpressionNet.predictExpressions(face), this.extractedFaces);
             return extendWithFaceExpressions(parentResult, faceExpressions);
@@ -4437,7 +4437,7 @@
         async run() {
             const parentResult = await this.parentTask;
             if (!parentResult) {
-                return;
+                return undefined;
             }
             const { age, gender, genderProbability } = await extractSingleFaceAndComputeResult(parentResult, this.input, face => nets.ageGenderNet.predictAgeAndGender(face), this.extractedFaces);
             return extendWithAge(extendWithGender(parentResult, gender, genderProbability), age);
@@ -4487,7 +4487,7 @@
         async run() {
             const parentResult = await this.parentTask;
             if (!parentResult) {
-                return;
+                return undefined;
             }
             const descriptor = await extractSingleFaceAndComputeResult(parentResult, this.input, face => nets.faceRecognitionNet.computeFaceDescriptor(face), null, parentResult => parentResult.landmarks.align(null, { useDlibAlignment: true }));
             return extendWithFaceDescriptor(parentResult, descriptor);
@@ -4538,7 +4538,7 @@
         async run() {
             const parentResult = await this.parentTask;
             if (!parentResult) {
-                return;
+                return undefined;
             }
             const { detection } = parentResult;
             const faces = this.input instanceof tf__namespace.Tensor

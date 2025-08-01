@@ -63,7 +63,7 @@ export class PredictSingleAgeAndGenderTask<
 
     const parentResult = await this.parentTask
     if (!parentResult) {
-      return
+      return undefined
     }
 
     const { age, gender, genderProbability } = await extractSingleFaceAndComputeResult<TSource, AgeAndGenderPrediction>(

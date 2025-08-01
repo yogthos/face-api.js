@@ -61,7 +61,7 @@ export class PredictSingleFaceExpressionsTask<
 
     const parentResult = await this.parentTask
     if (!parentResult) {
-      return
+      return undefined
     }
 
     const faceExpressions = await extractSingleFaceAndComputeResult<TSource, FaceExpressions>(

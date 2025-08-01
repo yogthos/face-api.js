@@ -61,7 +61,7 @@ export class ComputeSingleFaceDescriptorTask<
 
     const parentResult = await this.parentTask
     if (!parentResult) {
-      return
+      return undefined
     }
     const descriptor = await extractSingleFaceAndComputeResult<TSource, Float32Array>(
       parentResult,

@@ -95,15 +95,15 @@ describe('toNetInput', () => {
 
     it('constructor', async () => {
       const tensors = [imgEl, imgEl, imgEl].map(el => tf.browser.fromPixels(createCanvasFromMedia(el)))
-      const tensor4ds = tensors.map(t => t.expandDims<tf.Rank.R4>())
+      const tensor4ds = tensors.map(t => t.expandDims(0))
 
       await expectAllTensorsReleased(async () => {
         await toNetInput(imgEl)
         await toNetInput([imgEl, imgEl, imgEl])
-        await toNetInput(tensors[0])
-        await toNetInput(tensors)
-        await toNetInput(tensor4ds[0])
-        await toNetInput(tensor4ds)
+        await toNetInput(tensors[0] as tf.Tensor3D)
+        await toNetInput(tensors as tf.Tensor3D[])
+        await toNetInput(tensor4ds[0] as tf.Tensor4D)
+        await toNetInput(tensor4ds as tf.Tensor4D[])
       })
 
       tensors.forEach(t => t.dispose())

@@ -114,7 +114,7 @@ describeWithBackend('faceExpressionNet', () => {
       })
 
       it('single batch size 1 tf.Tensor4Ds', async () => {
-        const tensor = tf.tidy(() => tf.browser.fromPixels(createCanvasFromMedia(imgElAngry)).expandDims()) as tf.Tensor4D
+        const tensor = tf.tidy(() => tf.browser.fromPixels(createCanvasFromMedia(imgElAngry)).expandDims(0) as tf.Tensor4D);
 
         await expectAllTensorsReleased(async () => {
           const outTensor = await faceExpressionNet.forwardInput(await toNetInput(tensor))
@@ -126,7 +126,7 @@ describeWithBackend('faceExpressionNet', () => {
 
       it('multiple batch size 1 tf.Tensor4Ds', async () => {
         const tensors = [imgElAngry, imgElAngry, imgElAngry]
-          .map(el => tf.tidy(() => tf.browser.fromPixels(createCanvasFromMedia(el)).expandDims())) as tf.Tensor4D[]
+          .map(el => tf.tidy(() => tf.browser.fromPixels(createCanvasFromMedia(el)).expandDims(0) as tf.Tensor4D));
 
         await expectAllTensorsReleased(async () => {
           const outTensor = await faceExpressionNet.forwardInput(await toNetInput(tensors))
@@ -174,7 +174,7 @@ describeWithBackend('faceExpressionNet', () => {
       })
 
       it('single batch size 1 tf.Tensor4Ds', async () => {
-        const tensor = tf.tidy(() => tf.browser.fromPixels(createCanvasFromMedia(imgElAngry)).expandDims()) as tf.Tensor4D
+        const tensor = tf.tidy(() => tf.browser.fromPixels(createCanvasFromMedia(imgElAngry)).expandDims(0) as tf.Tensor4D);
 
         await expectAllTensorsReleased(async () => {
           await faceExpressionNet.predictExpressions(tensor)
@@ -185,7 +185,7 @@ describeWithBackend('faceExpressionNet', () => {
 
       it('multiple batch size 1 tf.Tensor4Ds', async () => {
         const tensors = [imgElAngry, imgElAngry, imgElAngry]
-          .map(el => tf.tidy(() => tf.browser.fromPixels(createCanvasFromMedia(el)).expandDims())) as tf.Tensor4D[]
+          .map(el => tf.tidy(() => tf.browser.fromPixels(createCanvasFromMedia(el)).expandDims(0) as tf.Tensor4D));
 
         await expectAllTensorsReleased(async () => {
           await faceExpressionNet.predictExpressions(tensors)

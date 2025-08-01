@@ -34,7 +34,10 @@ const browserTestEnv: TestEnv = {
   initNet: initNetBrowser
 }
 
+// Declare global type for TypeScript
+declare const global: any;
+
 export function getTestEnv(): TestEnv {
-  return global['nodeTestEnv'] || browserTestEnv
+  return global['nodeTestEnv'] || browserTestEnv;
 }
 

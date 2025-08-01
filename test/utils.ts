@@ -182,7 +182,7 @@ export type DescribeWithNetsOptions = {
   withTinyYolov2?: WithTinyYolov2Options
 }
 
-const gpgpu = tf.backend()['gpgpu']
+const gpgpu = tf.backend() && (tf.backend() as any).gpgpu
 
 if (gpgpu) {
   console.log('running tests on WebGL backend')
@@ -192,14 +192,14 @@ if (gpgpu) {
 
 export function describeWithBackend(description: string, specDefinitions: () => void) {
 
-  if (!(gpgpu instanceof tf.webgl.GPGPUContext)) {
+  if (!(gpgpu instanceof (tf.engine().backend as any).GPGPUContext)) {
     describe(description, specDefinitions)
     return
   }
 
   const defaultBackendName = tf.getBackend()
   const newBackendName = 'testBackend'
-  const backend = new tf.webgl.MathBackendWebGL(gpgpu)
+  const backend = new (tf.engine().backend as any).MathBackendWebGL(gpgpu)
 
   describe(description, () => {
     beforeAll(() => {
