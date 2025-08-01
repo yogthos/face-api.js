@@ -29,17 +29,17 @@ export class SsdMobilenetv1 extends NeuralNetwork<NetParams> {
     }
 
     return tf.tidy(() => {
-      const batchTensor = input.toBatchTensor(512, false).toFloat()
+      const batchTensor = tf.cast(input.toBatchTensor(512, false), 'float32') as tf.Tensor4D;
 
-      const x = tf.sub(tf.mul(batchTensor, tf.scalar(0.007843137718737125)), tf.scalar(1)) as tf.Tensor4D
-      const features = mobileNetV1(x, params.mobilenetv1)
+      const x = tf.sub(tf.mul(batchTensor, tf.scalar(0.007843137718737125)), tf.scalar(1)) as tf.Tensor4D;
+      const features = mobileNetV1(x, params.mobilenetv1);
 
       const {
         boxPredictions,
         classPredictions
-      } = predictionLayer(features.out, features.conv11, params.prediction_layer)
+      } = predictionLayer(features.out, features.conv11, params.prediction_layer);
 
-      return outputLayer(boxPredictions, classPredictions, params.output_layer)
+      return outputLayer(boxPredictions, classPredictions, params.output_layer);
     })
   }
 
@@ -87,7 +87,7 @@ export class SsdMobilenetv1 extends NeuralNetwork<NetParams> {
     const padX = inputSize / reshapedDims.width
     const padY = inputSize / reshapedDims.height
 
-    const boxesData = boxes.arraySync()
+    const boxesData = await boxes.array()
     const results = indices
       .map(idx => {
         const [top, bottom] = [

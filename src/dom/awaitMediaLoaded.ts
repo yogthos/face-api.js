@@ -1,28 +1,28 @@
 import { env } from '../env';
 import { isMediaLoaded } from './isMediaLoaded';
 
-export function awaitMediaLoaded(media: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement) {
+export function awaitMediaLoaded(media: HTMLImageElement | HTMLVideoElement | HTMLCanvasElement): Promise<void> {
 
-  return new Promise((resolve, reject) => {
+  return new Promise<void>((resolve, reject) => {
     if (media instanceof env.getEnv().Canvas || isMediaLoaded(media)) {
-      return resolve()
+      return resolve();
     }
 
     function onLoad(e: Event) {
-      if (!e.currentTarget) return
-      e.currentTarget.removeEventListener('load', onLoad)
-      e.currentTarget.removeEventListener('error', onError)
-      resolve(e)
+      if (!e.currentTarget) return;
+      e.currentTarget.removeEventListener('load', onLoad);
+      e.currentTarget.removeEventListener('error', onError);
+      resolve();
     }
 
     function onError(e: Event) {
-      if (!e.currentTarget) return
-      e.currentTarget.removeEventListener('load', onLoad)
-      e.currentTarget.removeEventListener('error', onError)
-      reject(e)
+      if (!e.currentTarget) return;
+      e.currentTarget.removeEventListener('load', onLoad);
+      e.currentTarget.removeEventListener('error', onError);
+      reject(e);
     }
 
-    media.addEventListener('load', onLoad)
-    media.addEventListener('error', onError)
-  })
+    media.addEventListener('load', onLoad);
+    media.addEventListener('error', onError);
+  });
 }

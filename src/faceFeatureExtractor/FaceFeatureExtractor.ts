@@ -23,17 +23,17 @@ export class FaceFeatureExtractor extends NeuralNetwork<FaceFeatureExtractorPara
     }
 
     return tf.tidy(() => {
-      const batchTensor = input.toBatchTensor(112, true)
-      const meanRgb = [122.782, 117.001, 104.298]
-      const normalized = normalize(batchTensor, meanRgb).div(tf.scalar(255)) as tf.Tensor4D
+      const batchTensor = input.toBatchTensor(112, true) as tf.Tensor4D;
+      const meanRgb = [122.782, 117.001, 104.298];
+      const normalized = tf.div(normalize(batchTensor, meanRgb), tf.scalar(255)) as tf.Tensor4D;
 
-      let out = denseBlock4(normalized, params.dense0, true)
-      out = denseBlock4(out, params.dense1)
-      out = denseBlock4(out, params.dense2)
-      out = denseBlock4(out, params.dense3)
-      out = tf.avgPool(out, [7, 7], [2, 2], 'valid')
+      let out = denseBlock4(normalized, params.dense0, true);
+      out = denseBlock4(out, params.dense1);
+      out = denseBlock4(out, params.dense2);
+      out = denseBlock4(out, params.dense3);
+      out = tf.avgPool(out, [7, 7], [2, 2], 'valid') as tf.Tensor4D;
 
-      return out
+      return out;
     })
   }
 

@@ -45,7 +45,7 @@ export abstract class FaceProcessor<
       const bottleneckFeatures = input instanceof NetInput
         ? this.faceFeatureExtractor.forwardInput(input)
         : input
-      return fullyConnectedLayer(bottleneckFeatures.as2D(bottleneckFeatures.shape[0], -1), params.fc)
+      return fullyConnectedLayer(tf.reshape(bottleneckFeatures as tf.Tensor4D, [bottleneckFeatures.shape[0], -1]) as tf.Tensor2D, params.fc) as tf.Tensor2D
     })
   }
 

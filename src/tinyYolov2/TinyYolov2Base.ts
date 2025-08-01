@@ -50,43 +50,43 @@ export class TinyYolov2Base extends NeuralNetwork<TinyYolov2NetParams> {
   public runTinyYolov2(x: tf.Tensor4D, params: DefaultTinyYolov2NetParams): tf.Tensor4D {
 
     let out = convWithBatchNorm(x, params.conv0)
-    out = tf.maxPool(out, [2, 2], [2, 2], 'same')
+    out = tf.maxPool(out, [2, 2], [2, 2], 'same') as tf.Tensor4D
     out = convWithBatchNorm(out, params.conv1)
-    out = tf.maxPool(out, [2, 2], [2, 2], 'same')
+    out = tf.maxPool(out, [2, 2], [2, 2], 'same') as tf.Tensor4D
     out = convWithBatchNorm(out, params.conv2)
-    out = tf.maxPool(out, [2, 2], [2, 2], 'same')
+    out = tf.maxPool(out, [2, 2], [2, 2], 'same') as tf.Tensor4D
     out = convWithBatchNorm(out, params.conv3)
-    out = tf.maxPool(out, [2, 2], [2, 2], 'same')
+    out = tf.maxPool(out, [2, 2], [2, 2], 'same') as tf.Tensor4D
     out = convWithBatchNorm(out, params.conv4)
-    out = tf.maxPool(out, [2, 2], [2, 2], 'same')
+    out = tf.maxPool(out, [2, 2], [2, 2], 'same') as tf.Tensor4D
     out = convWithBatchNorm(out, params.conv5)
-    out = tf.maxPool(out, [2, 2], [1, 1], 'same')
+    out = tf.maxPool(out, [2, 2], [1, 1], 'same') as tf.Tensor4D
     out = convWithBatchNorm(out, params.conv6)
     out = convWithBatchNorm(out, params.conv7)
 
-    return convLayer(out, params.conv8, 'valid', false)
+    return convLayer(out, params.conv8, 'valid', false) as tf.Tensor4D
   }
 
   public runMobilenet(x: tf.Tensor4D, params: MobilenetParams): tf.Tensor4D {
 
     let out = this.config.isFirstLayerConv2d
-      ? leaky(convLayer(x, params.conv0 as ConvParams, 'valid', false))
-      : depthwiseSeparableConv(x, params.conv0 as SeparableConvParams)
-    out = tf.maxPool(out, [2, 2], [2, 2], 'same')
-    out = depthwiseSeparableConv(out, params.conv1)
-    out = tf.maxPool(out, [2, 2], [2, 2], 'same')
-    out = depthwiseSeparableConv(out, params.conv2)
-    out = tf.maxPool(out, [2, 2], [2, 2], 'same')
-    out = depthwiseSeparableConv(out, params.conv3)
-    out = tf.maxPool(out, [2, 2], [2, 2], 'same')
-    out = depthwiseSeparableConv(out, params.conv4)
-    out = tf.maxPool(out, [2, 2], [2, 2], 'same')
-    out = depthwiseSeparableConv(out, params.conv5)
-    out = tf.maxPool(out, [2, 2], [1, 1], 'same')
-    out = params.conv6 ? depthwiseSeparableConv(out, params.conv6) : out
-    out = params.conv7 ? depthwiseSeparableConv(out, params.conv7) : out
+      ? leaky(convLayer(x, params.conv0 as ConvParams, 'valid', false)) as tf.Tensor4D
+      : depthwiseSeparableConv(x, params.conv0 as SeparableConvParams) as tf.Tensor4D
+    out = tf.maxPool(out, [2, 2], [2, 2], 'same') as tf.Tensor4D
+    out = depthwiseSeparableConv(out, params.conv1) as tf.Tensor4D
+    out = tf.maxPool(out, [2, 2], [2, 2], 'same') as tf.Tensor4D
+    out = depthwiseSeparableConv(out, params.conv2) as tf.Tensor4D
+    out = tf.maxPool(out, [2, 2], [2, 2], 'same') as tf.Tensor4D
+    out = depthwiseSeparableConv(out, params.conv3) as tf.Tensor4D
+    out = tf.maxPool(out, [2, 2], [2, 2], 'same') as tf.Tensor4D
+    out = depthwiseSeparableConv(out, params.conv4) as tf.Tensor4D
+    out = tf.maxPool(out, [2, 2], [2, 2], 'same') as tf.Tensor4D
+    out = depthwiseSeparableConv(out, params.conv5) as tf.Tensor4D
+    out = tf.maxPool(out, [2, 2], [1, 1], 'same') as tf.Tensor4D
+    out = params.conv6 ? depthwiseSeparableConv(out, params.conv6) as tf.Tensor4D : out
+    out = params.conv7 ? depthwiseSeparableConv(out, params.conv7) as tf.Tensor4D : out
 
-    return convLayer(out, params.conv8, 'valid', false)
+    return convLayer(out, params.conv8, 'valid', false) as tf.Tensor4D
   }
 
   public forwardInput(input: NetInput, inputSize: number): tf.Tensor4D {
@@ -99,11 +99,11 @@ export class TinyYolov2Base extends NeuralNetwork<TinyYolov2NetParams> {
 
     return tf.tidy(() => {
 
-      let batchTensor = input.toBatchTensor(inputSize, false).toFloat()
+      let batchTensor = tf.cast(input.toBatchTensor(inputSize, false), 'float32') as tf.Tensor4D;
       batchTensor = this.config.meanRgb
-        ? normalize(batchTensor, this.config.meanRgb)
+        ? normalize(batchTensor, this.config.meanRgb) as tf.Tensor4D
         : batchTensor
-      batchTensor = batchTensor.div(tf.scalar(256)) as tf.Tensor4D
+      batchTensor = tf.div(batchTensor, tf.scalar(256)) as tf.Tensor4D
 
       return this.config.withSeparableConvs
         ? this.runMobilenet(batchTensor, params as MobilenetParams)
@@ -121,7 +121,7 @@ export class TinyYolov2Base extends NeuralNetwork<TinyYolov2NetParams> {
 
     const netInput = await toNetInput(input)
     const out = await this.forwardInput(netInput, inputSize)
-    const out0 = tf.tidy(() => tf.unstack(out)[0].expandDims()) as tf.Tensor4D
+    const out0 = tf.tidy(() => tf.expandDims(tf.unstack(out)[0]) as tf.Tensor4D)
 
     const inputDimensions = {
       width: netInput.getInputWidth(0),
@@ -190,13 +190,13 @@ export class TinyYolov2Base extends NeuralNetwork<TinyYolov2NetParams> {
     const numBoxes = this.config.anchors.length
 
     const [boxesTensor, scoresTensor, classScoresTensor] = tf.tidy(() => {
-      const reshaped = outputTensor.reshape([numCells, numCells, numBoxes, this.boxEncodingSize])
+      const reshaped = tf.reshape(outputTensor, [numCells, numCells, numBoxes, this.boxEncodingSize]) as tf.Tensor4D
 
-      const boxes = reshaped.slice([0, 0, 0, 0], [numCells, numCells, numBoxes, 4])
-      const scores = reshaped.slice([0, 0, 0, 4], [numCells, numCells, numBoxes, 1])
+      const boxes = tf.slice(reshaped, [0, 0, 0, 0], [numCells, numCells, numBoxes, 4]) as tf.Tensor4D
+      const scores = tf.slice(reshaped, [0, 0, 0, 4], [numCells, numCells, numBoxes, 1]) as tf.Tensor4D
       const classScores = this.withClassScores
-        ? tf.softmax(reshaped.slice([0, 0, 0, 5], [numCells, numCells, numBoxes, this.config.classes.length]), 3)
-        : tf.scalar(0)
+        ? tf.softmax(tf.slice(reshaped, [0, 0, 0, 5], [numCells, numCells, numBoxes, this.config.classes.length]) as tf.Tensor4D, 3) as tf.Tensor4D
+        : tf.scalar(0) as tf.Scalar
       return [boxes, scores, classScores]
     })
 
@@ -208,19 +208,19 @@ export class TinyYolov2Base extends NeuralNetwork<TinyYolov2NetParams> {
       for (let col = 0; col < numCells; col ++) {
         for (let anchor = 0; anchor < numBoxes; anchor ++) {
 
-          const score = sigmoid(scoresData[row][col][anchor][0]);
+          const score = sigmoid((scoresData as any)[row][col][anchor][0]);
           if (!scoreThreshold || score > scoreThreshold) {
-            const ctX = ((col + sigmoid(boxesData[row][col][anchor][0])) / numCells) * correctionFactorX
-            const ctY = ((row + sigmoid(boxesData[row][col][anchor][1])) / numCells) * correctionFactorY
-            const width = ((Math.exp(boxesData[row][col][anchor][2]) * this.config.anchors[anchor].x) / numCells) * correctionFactorX
-            const height = ((Math.exp(boxesData[row][col][anchor][3]) * this.config.anchors[anchor].y) / numCells) * correctionFactorY
+            const ctX = ((col + sigmoid((boxesData as any)[row][col][anchor][0])) / numCells) * correctionFactorX
+            const ctY = ((row + sigmoid((boxesData as any)[row][col][anchor][1])) / numCells) * correctionFactorY
+            const width = ((Math.exp((boxesData as any)[row][col][anchor][2]) * this.config.anchors[anchor].x) / numCells) * correctionFactorX
+            const height = ((Math.exp((boxesData as any)[row][col][anchor][3]) * this.config.anchors[anchor].y) / numCells) * correctionFactorY
 
             const x = (ctX - (width / 2))
             const y = (ctY - (height / 2))
 
             const pos = { row, col, anchor }
             const { classScore, label } = this.withClassScores
-              ? await this.extractPredictedClass(classScoresTensor as tf.Tensor4D, pos)
+              ? await this.extractPredictedClass(classScoresTensor as tf.Tensor, pos)
               : { classScore: 1, label: 0 }
 
             results.push({
@@ -242,11 +242,11 @@ export class TinyYolov2Base extends NeuralNetwork<TinyYolov2NetParams> {
     return results
   }
 
-  private async extractPredictedClass(classesTensor: tf.Tensor4D, pos: { row: number, col: number, anchor: number },) {
+  private async extractPredictedClass(classesTensor: tf.Tensor, pos: { row: number, col: number, anchor: number },) {
     const { row, col, anchor } = pos
     const classesData = await classesTensor.array()
     return Array(this.config.classes.length).fill(0)
-      .map((_, i) => classesData[row][col][anchor][i])
+      .map((_, i) => (classesData as any)[row][col][anchor][i])
       .map((classScore, label) => ({
         classScore,
         label

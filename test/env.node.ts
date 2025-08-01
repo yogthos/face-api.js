@@ -28,4 +28,6 @@ const nodeTestEnv: TestEnv = {
   initNet: initNetNode
 }
 
-global['nodeTestEnv'] = nodeTestEnv
+// Properly assign to global object with correct typing
+declare const global: any;
+global.nodeTestEnv = nodeTestEnv

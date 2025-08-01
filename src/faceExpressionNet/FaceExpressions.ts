@@ -1,4 +1,6 @@
-export const FACE_EXPRESSION_LABELS = ['neutral', 'happy', 'sad', 'angry', 'fearful', 'disgusted', 'surprised']
+export const FACE_EXPRESSION_LABELS = ['neutral', 'happy', 'sad', 'angry', 'fearful', 'disgusted', 'surprised'] as const;
+
+type ExpressionLabel = typeof FACE_EXPRESSION_LABELS[number];
 
 export class FaceExpressions {
   public neutral: number
@@ -15,13 +17,13 @@ export class FaceExpressions {
     }
 
     FACE_EXPRESSION_LABELS.forEach((expression, idx) => {
-      this[expression] = probabilities[idx]
+      (this as any)[expression] = probabilities[idx]
     })
   }
 
   asSortedArray() {
     return FACE_EXPRESSION_LABELS
-      .map(expression => ({ expression, probability: this[expression] as number }))
+      .map(expression => ({ expression, probability: (this as any)[expression] as number }))
       .sort((e0, e1) => e1.probability - e0.probability)
   }
 }

@@ -26,10 +26,10 @@ export abstract class FaceLandmark68NetBase<
 
     return tf.tidy(() => {
       const createInterleavedTensor = (fillX: number, fillY: number) =>
-        tf.stack([
+        tf.reshape(tf.stack([
           tf.fill([68], fillX),
           tf.fill([68], fillY)
-        ], 1).as2D(1, 136).as1D()
+        ], 1), [1, 136]) as tf.Tensor2D
 
       const getPadding = (batchIdx: number, cond: (w: number, h: number) => boolean): number => {
         const { width, height } = inputDimensions[batchIdx]
@@ -38,28 +38,31 @@ export abstract class FaceLandmark68NetBase<
       const getPaddingX = (batchIdx: number) => getPadding(batchIdx, (w, h) => w < h)
       const getPaddingY = (batchIdx: number) => getPadding(batchIdx, (w, h) => h < w)
 
-      const landmarkTensors = output
-        .mul(tf.fill([batchSize, 136], inputSize))
-        .sub(tf.stack(Array.from(Array(batchSize), (_, batchIdx) =>
-          createInterleavedTensor(
-            getPaddingX(batchIdx),
-            getPaddingY(batchIdx)
-          )
-        )))
-        .div(tf.stack(Array.from(Array(batchSize), (_, batchIdx) =>
+      const landmarkTensors = tf.div(
+        tf.sub(
+          tf.mul(output, tf.fill([batchSize, 136], inputSize) as tf.Tensor2D),
+          tf.stack(Array.from(Array(batchSize), (_, batchIdx) =>
+            createInterleavedTensor(
+              getPaddingX(batchIdx),
+              getPaddingY(batchIdx)
+            )
+          )) as tf.Tensor2D
+        ),
+        tf.stack(Array.from(Array(batchSize), (_, batchIdx) =>
           createInterleavedTensor(
             inputDimensions[batchIdx].width,
             inputDimensions[batchIdx].height
           )
-        )))
+        )) as tf.Tensor2D
+      ) as tf.Tensor2D
 
-      return landmarkTensors as tf.Tensor2D
+      return landmarkTensors
     })
   }
 
   public forwardInput(input: NetInput): tf.Tensor2D {
     return tf.tidy(() => {
-      const out = this.runNet(input)
+      const out = this.runNet(input) as tf.Tensor2D
       return this.postProcess(
         out,
         input.inputSize as number,
