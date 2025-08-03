@@ -29,7 +29,7 @@ export abstract class FaceLandmark68NetBase<
         tf.reshape(tf.stack([
           tf.fill([68], fillX),
           tf.fill([68], fillY)
-        ], 1), [1, 136]) as tf.Tensor2D
+        ], 1), [136]) as tf.Tensor1D
 
       const getPadding = (batchIdx: number, cond: (w: number, h: number) => boolean): number => {
         const { width, height } = inputDimensions[batchIdx]
